@@ -1,0 +1,9 @@
+{% set jobs_requiring_approval = jobs | selectattr('approval_required') | list -%}
+{%- if jobs_requiring_approval -%}
+{{ jobs_requiring_approval | count }} jobs require approval
+{%- for jobs_in_tracker in jobs_requiring_approval | groupby('pipeline_tracker') %}
+{{ jobs_in_tracker.grouper }} has {{ jobs_in_tracker.list | count }} jobs needing admin attention
+{%- endfor %}
+{%- else -%}
+No jobs require approval
+{%- endif -%}
