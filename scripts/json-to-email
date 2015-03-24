@@ -7,8 +7,10 @@ import smtplib
 import sys
 
 from argparse import ArgumentParser, ArgumentError, FileType
+from smtplibwrapper import Email, EmailServer
+from smtplibwrapper import OK, NoContent, Failure
 
-def check_and_get_plaintext_template_path(parser, file_handle):
+def check_and_get_template_path(parser, file_handle):
   if file_handle == None:
     parser.error("Must provide a jinja2 template for email output")
   filename = file_handle.name
@@ -43,18 +45,48 @@ if __name__ == '__main__':
   parser.add_argument('--subject', '-s', type=str,
                      help='Subject line for email')
 
-  parser.add_argument('--to', '-t', nargs='*', type=str,
+  parser.add_argument('--to', '-t', nargs='+', type=str,
                       help='To: recipient of email')
+
+  parser.add_argument('--from', '-f', dest='sender', type=str,
+                      help='From: sender of email')
+
+  parser.add_argument('--server', type=str, default='localhost',
+                      help='SMTP server')
+
+  parser.add_argument('--noop', '-n', action='store_true', default=False,
+                      help='Noop: if set, prints email to stdout instead of sending')
 
   parser.add_argument('json', type=str,
                       help="Json formated data file (use '-' for stdin)")
 
   args = parser.parse_args()
 
-  plaintext_template_path = check_and_get_plaintext_template_path(parser, args.plain)
-  plaintext_template = get_template(plaintest_template_path)
+  template_path = check_and_get_template_path(parser, args.plain)
+  template = get_template(template_path)
 
   data = check_and_get_data(parser, args.json)
 
-  output = plaintext_template.render(data)
-  print output
+  email_server = EmailServer(args.server)
+  email = Email(sender=args.sender, recipients=args.to, subject=args.subject, template=template, data=data)
+
+  if args.noop:
+    print email.as_string()
+    exit(0)
+  else:
+    response = email_server.send(email)
+
+  if isinstance(response, OK):
+    print >> sys.stderr, "OK: %s" % response.message
+  elif isinstance(response, Failure):
+    # Maybe add an optional parameter to send someone else the error report?
+    print >> sys.stderr, "No email sent because:"
+    print >> sys.stderr, "Failure: %s" % response.message
+    exit(1)
+  elif isinstance(response, NoContent):
+    print >> sys.stderr, "No email sent because:"
+    print >> sys.stderr, "NoContent: %s" % response.message
+  else:
+    print >> sys.stderr, "No email sent because:"
+    print >> sys.stderr, "UNKNOWN: %s" % response.message
+    exit(1)
