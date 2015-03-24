@@ -1,6 +1,19 @@
 import re
 import smtplib
 
+class Response(object):
+  def __init__(self, message):
+    self.message = message
+
+class Failure(Response):
+  pass
+
+class NoContent(Response):
+  pass
+
+class OK(Response):
+  pass
+
 class EmailServer(object):
   def __init__(self, *args, **kwargs):
     self.server = smtplib.SMTP(*args, **kwargs)
@@ -9,19 +22,18 @@ class EmailServer(object):
     self.server.quit()
 
   def send(self, email):
-    (should_send, reason) = email.should_send()
-    if not should_send:
-      return (False, reason)
+    response = email.should_send()
+    if not isinstance(response, OK):
+      return response
     else:
       sender = email.sender
       recipients = email.recipients
       try:
         email_content = email.to_string()
         self.server.sendmail(sender, recipients, email_content)
-        self.server.foo()
       except Exception:
-        return (False, "Problem sending the email")
-      return (True, "Sent OK")
+        return Failure("Problem sending the email")
+      return OK("Sent OK")
 
 class Email(object):
   def __init__(self, template, data):
@@ -33,9 +45,9 @@ class Email(object):
     try:
       output = self.template.render(self.data)
     except:
-      return (False, "Couldn't render email")
+      return Failure("Couldn't render email")
     matches = just_whitespace.match(output)
     if matches == None:
-      return (True, "Seems OK to send")
+      return OK("Seems OK to send")
     else:
-      return (False, "Email was empty")
+      return NoContent("Email was empty")
