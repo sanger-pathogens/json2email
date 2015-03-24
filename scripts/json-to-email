@@ -1,0 +1,39 @@
+#!/usr/bin/env python
+
+import json
+import jinja2
+import os
+import smtplib
+import sys
+
+from argparse import ArgumentParser, ArgumentError, FileType
+
+if __name__ == '__main__':
+  parser = ArgumentParser(description="Takes a jinja2 template and some json and sends an email")
+
+  parser.add_argument('--plain', '-p', type=FileType('r'),
+                      help='Template with plain text template for email')
+
+  parser.add_argument('--subject', '-s', type=str,
+                     help='Subject line for email')
+
+  parser.add_argument('--to', '-t', nargs='*', type=str,
+                      help='To: recipient of email')
+
+  parser.add_argument('--json', '-j', nargs='?', type=FileType('r'), default=sys.stdin, 
+                      help='Json formated data file (defaults to stdin)')
+
+  args = parser.parse_args()
+
+  if args.plain == None:
+    parser.error("Must provide a jinja2 template for email output")
+
+  template_loader = jinja2.FileSystemLoader(searchpath='/')
+  template_env = jinja2.Environment(loader=template_loader)
+  template_file = os.path.abspath(args.plain.name)
+  template = template_env.get_template(template_file)
+
+  data = json.load(args.json)
+
+  output = template.render(data)
+  print output 
