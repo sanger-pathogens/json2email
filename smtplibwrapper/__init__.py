@@ -1,5 +1,6 @@
 import re
 import smtplib
+from email.mime.text import MIMEText
 
 class Response(object):
   def __init__(self, message):
@@ -29,14 +30,17 @@ class EmailServer(object):
       sender = email.sender
       recipients = email.recipients
       try:
-        email_content = email.to_string()
-        self.server.sendmail(sender, recipients, email_content)
+        content = email.as_string()
+        self.server.sendmail(sender, recipients, content)
       except Exception:
         return Failure("Problem sending the email")
       return OK("Sent OK")
 
 class Email(object):
-  def __init__(self, template, data):
+  def __init__(self, sender, recipients, subject, template, data):
+    self.sender = sender
+    self.recipients = recipients
+    self.subject = subject
     self.template = template
     self.data = data
 
@@ -51,3 +55,14 @@ class Email(object):
       return OK("Seems OK to send")
     else:
       return NoContent("Email was empty")
+
+  def get_text_body(self):
+    return self.template.render(self.data)
+
+  def as_string(self):
+    text = self.get_text_body()
+    msg = MIMEText(text)
+    msg['Subject'] = self.subject
+    msg['From'] = self.sender
+    msg['To'] = ', '.join(self.recipients)
+    return msg.as_string()
