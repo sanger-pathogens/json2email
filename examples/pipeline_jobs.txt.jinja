@@ -4,4 +4,5 @@
 {%- for jobs_in_tracker in jobs_requiring_approval | groupby('pipeline_tracker') %}
 {{ jobs_in_tracker.grouper }} has {{ jobs_in_tracker.list | count }} jobs needing admin attention
 {%- endfor %}
+Report last updated at {{ created_at }}
 {%- endif -%}
