@@ -26,7 +26,7 @@ setup(name='jsontoemail',
       license='GPLv3',
       packages=find_packages(),
       classifiers=[
-        "License :: OSI Approved :: GNU General Public License (GPLv3)",
+        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Programming Language :: Python",
         "Development Status :: 4 - Beta",
         "Topic :: Communications :: Email",
