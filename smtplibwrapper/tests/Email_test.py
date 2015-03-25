@@ -42,6 +42,14 @@ class TestEmailServer(unittest.TestCase):
 
 class TestEmail(unittest.TestCase):
 
+  def test_parse_recipients(self):
+    template = MagicMock()
+    email = Email(sender='ben', recipients=['bob', 'betty'], subject='email', template=template, data={})
+
+    self.assertEqual(email.parse_recipients('ben'), ['ben'])
+    self.assertEqual(email.parse_recipients(['ben']), ['ben'])
+    self.assertEqual(email.parse_recipients(['ben', 'bob']), ['ben', 'bob'])
+
   def test_should_send(self):
     template = MagicMock()
     email = Email(sender='ben', recipients=['bob', 'betty'], subject='email', template=template, data={})

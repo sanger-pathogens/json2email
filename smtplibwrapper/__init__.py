@@ -39,10 +39,16 @@ class EmailServer(object):
 class Email(object):
   def __init__(self, sender, recipients, subject, template, data):
     self.sender = sender
-    self.recipients = recipients
+    self.recipients = self.parse_recipients(recipients)
     self.subject = subject
     self.template = template
     self.data = data
+
+  def parse_recipients(self, recipients):
+    if isinstance(recipients, str):
+      return [recipients]
+    else:
+      return recipients
 
   def should_send(self):
     just_whitespace = re.compile('^\s*$')
