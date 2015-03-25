@@ -1,3 +1,4 @@
+import os
 from setuptools import setup, find_packages
 import multiprocessing
 
@@ -8,9 +9,11 @@ def readme():
 setup(name='jsontoemail',
       version='0.0.1',
       description='Takes a jinja2 template and some json and sends an email',
+      long_description=readme(),
       url='https://github.com/sanger-pathogens/jsontoemail',
       author='Ben Taylor',
       author_email='ben.taylor@sanger.ac.uk',
+      scripts=['scripts/json-to-email'],
       install_requires=[
         'email'
       ],
