@@ -14,6 +14,7 @@ setup(name='jsontoemail',
       author='Ben Taylor',
       author_email='ben.taylor@sanger.ac.uk',
       scripts=['scripts/json-to-email'],
+      include_package_data=True,
       install_requires=[
         'email',
         'jinja2'
