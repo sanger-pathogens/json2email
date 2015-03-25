@@ -5,6 +5,7 @@ import jinja2
 import os
 import smtplib
 import sys
+import time
 import datetime
 
 from argparse import ArgumentParser, ArgumentError, FileType
@@ -117,8 +118,9 @@ if __name__ == '__main__':
       message = """\
 Warning: There was an issue connecting to the SMTP server.
 Ignoring because we're in noop mode.  Further details below for info:
-%s""" % e.message
+***{message}***""".format(message=e.message)
       print >> sys.stderr, message
+      time.sleep(1)
     else:
       parser.error("Issue creating EmailServer object.  See below:\n%s" % e.message)
 
