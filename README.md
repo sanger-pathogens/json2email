@@ -127,6 +127,7 @@ Report last updated at {{ created_at }}
 ```
 
 ## Requirements
+- jinja2
 - smtplib
 - email
 - re
