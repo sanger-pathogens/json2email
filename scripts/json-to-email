@@ -109,7 +109,18 @@ if __name__ == '__main__':
                       help="Json formated data file (use '-' for stdin)")
 
   args = parser.parse_args()
-  email_server = EmailServer(args.server)
+
+  try:
+    email_server = EmailServer(args.server)
+  except Exception as e:
+    if args.noop:
+      message = """\
+Warning: There was an issue connecting to the SMTP server.
+Ignoring because we're in noop mode.  Further details below for info:
+%s""" % e.message
+      print >> sys.stderr, message
+    else:
+      parser.error("Issue creating EmailServer object.  See below:\n%s" % e.message)
 
   try:
     template_path = 'UNKNOWN_TEMPLATE'
@@ -118,7 +129,7 @@ if __name__ == '__main__':
     template = get_template(template_path)
     data = check_and_get_data(parser, args.json)
   except Exception as e:
-    if args.error:
+    if args.error and not args.noop:
       send_error_report(email_server, args.sender, args.to, args.error,
                         '[ERROR REPORT] ' + args.subject, e,
                         template_path, args, data)
