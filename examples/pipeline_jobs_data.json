@@ -1,0 +1,41 @@
+{
+  "created_at": "2015-03-24T15:26:17.246253",
+  "jobs": [
+    {
+      "approval_required": true,
+      "config_file": "/parent_dir/assembly_jobs/job_1.conf",
+      "job_type": "__Assembly__",
+      "pipeline_tracker": "/parent_dir/assembly_job_tracker.conf"
+    },
+    {
+      "approval_required": true,
+      "config_file": "/parent_dir/assembly_jobs/job_2.conf",
+      "job_type": "__Assembly__",
+      "pipeline_tracker": "/parent_dir/assembly_job_tracker.conf"
+    },
+    {
+      "approval_required": false,
+      "config_file": "/parent_dir/assembly_jobs/job_3.conf",
+      "job_type": "__Assembly__",
+      "pipeline_tracker": "/parent_dir/assembly_job_tracker.conf"
+    },
+    {
+      "approval_required": true,
+      "config_file": "/parent_dir/annotation_jobs/job_1.conf",
+      "job_type": "__Annotation__",
+      "pipeline_tracker": "/parent_dir/annotation_job_tracker.conf"
+    },
+    {
+      "approval_required": false,
+      "config_file": "/parent_dir/mapping_jobs/job_1.conf",
+      "job_type": "__Mapping__",
+      "pipeline_tracker": "/parent_dir/mapping_job_tracker.conf"
+    },
+    {
+      "approval_required": false,
+      "config_file": "/parent_dir/mapping_jobs/job_2.conf",
+      "job_type": "__Mapping__",
+      "pipeline_tracker": "/parent_dir/mapping_job_tracker.conf"
+    }
+  ]
+}
