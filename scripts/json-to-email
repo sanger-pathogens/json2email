@@ -117,7 +117,8 @@ if __name__ == '__main__':
       message = """\
 Warning: There was an issue connecting to the SMTP server.
 Ignoring because we're in noop mode.  Further details below for info:
-%s""" % e.message
+{message}
+""".format(message=e)
       print >> sys.stderr, message
     else:
       parser.error("Issue creating EmailServer object.  See below:\n%s" % e.message)
@@ -140,6 +141,7 @@ Ignoring because we're in noop mode.  Further details below for info:
   if args.noop:
     response = email.should_send()
     if isinstance(response, OK):
+      print >> sys.stderr, "Would have sent the following if not in noop:"
       print email.as_string()
     else:
       print "Wouldn't send an email because: '%s: %s'" % (type(response), response.message)

@@ -19,9 +19,6 @@ class EmailServer(object):
   def __init__(self, *args, **kwargs):
     self.server = smtplib.SMTP(*args, **kwargs)
 
-  def __del__(self):
-    self.server.quit()
-
   def send(self, email):
     response = email.should_send()
     if not isinstance(response, OK):
