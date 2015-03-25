@@ -135,4 +135,9 @@ For tests:
 - unittest
 - mock
 
+## Testing
+Test are run using:
+```
+./run_tests.sh
+```
 jsontoemail has been tested on Ubuntu 12.04 with python 2.7.3
