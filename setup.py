@@ -7,15 +7,15 @@ def readme():
     return f.read()
 
 setup(name='jsontoemail',
-      version='0.0.1',
+      version='0.0.3',
       description='Takes a jinja2 template and some json and sends an email',
       long_description=readme(),
       url='https://github.com/sanger-pathogens/jsontoemail',
       author='Ben Taylor',
       author_email='ben.taylor@sanger.ac.uk',
       scripts=['scripts/json-to-email'],
+      include_package_data=True,
       install_requires=[
-        'email',
         'jinja2'
       ],
       test_suite='nose.collector',
