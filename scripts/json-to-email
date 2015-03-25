@@ -127,7 +127,11 @@ if __name__ == '__main__':
   email = Email(sender=args.sender, recipients=args.to, subject=args.subject, template=template, data=data)
 
   if args.noop:
-    print email.as_string()
+    response = email.should_send()
+    if isinstance(response, OK):
+      print email.as_string()
+    else:
+      print "Wouldn't send an email because: '%s: %s'" % (type(response), response.message)
     exit(0)
   else:
     response = email_server.send(email)
