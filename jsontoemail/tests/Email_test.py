@@ -1,6 +1,6 @@
 import unittest
-from smtplibwrapper import Email, EmailServer
-from smtplibwrapper import Failure, NoContent, OK
+from jsontoemail import Email, EmailServer
+from jsontoemail import Failure, NoContent, OK
 from mock import MagicMock, patch
 from smtplib import SMTPResponseException
 
