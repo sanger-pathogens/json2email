@@ -5,18 +5,22 @@ import jinja2
 import os
 import smtplib
 import sys
+import datetime
 
 from argparse import ArgumentParser, ArgumentError, FileType
+from jinja2 import Template
 from smtplibwrapper import Email, EmailServer
 from smtplibwrapper import OK, NoContent, Failure
 
 def check_and_get_template_path(parser, file_handle):
   if file_handle == None:
-    parser.error("Must provide a jinja2 template for email output")
+    raise ValueError("Must provide a jinja2 template for email output")
   filename = file_handle.name
   return os.path.abspath(filename)
 
 def check_and_get_data(parser, filename):
+  if filename == None:
+     raise ValueError("Please provide some json to render in the template")
   try:
     if filename == '-':
       data = json.load(sys.stdin)
@@ -28,13 +32,54 @@ def check_and_get_data(parser, filename):
   except Exception as exception_details:
     message = """Could not load data from {filename}.  More details below:
 {exception_details}""".format(filename=filename, exception_details=exception_details)
-    parser.error(message)
+    raise ValueError(message)
   return data
 
 def get_template(template_path):
-  template_loader = jinja2.FileSystemLoader(searchpath='/')
-  template_env = jinja2.Environment(loader=template_loader)
-  return template_env.get_template(template_path)
+  try:
+    template_loader = jinja2.FileSystemLoader(searchpath='/')
+    template_env = jinja2.Environment(loader=template_loader)
+    template = template_env.get_template(template_path)
+    return template
+  except Exception as exception_details:
+    message = """Could not load template from {filename}.  More details below:
+{exception_details}""".format(filename=template_path, exception_details=exception_details)
+    raise ValueError(message)
+
+def send_error_report(email_server, error_sender, recipients, error_recipients, error_subject, error, template_path, arguments, data):
+  error_template = Template("""\
+There was a problem running {{ filename }} at {{ time }}.
+
+It has not been possible to send emails to one or more of the following:
+{%- for recipient in recipients %}
+{{ recipient }}
+{% endfor %}
+
+The reason was:
+{{ response_type }}: {{ response_message }}
+
+For reference, these were the arguments used:
+{{ arguments }}
+
+and this is the data that we tried to load into the {{ template_path }}:
+{{ data }}
+""")
+  error_data = { 'filename': os.path.abspath(__file__),
+                 'time': datetime.datetime.now().isoformat(),
+                 'recipients': recipients,
+                 'response_type': str(type(error)),
+                 'response_message': error.message,
+                 'template_path': template_path,
+                 'arguments': arguments,
+                 'data': data
+               }
+  error_email = Email(sender=error_sender, recipients=error_recipients, subject=error_subject,
+                      template=error_template, data=error_data)
+  response = email_server.send(error_email)
+  if not isinstance(response, OK):
+    print >> sys.stderr, "Failed to send the error report"
+    print >> sys.stderr, "Failure: %s" % error_response.message
+  return response
 
 if __name__ == '__main__':
   parser = ArgumentParser(description="Takes a jinja2 template and some json and sends an email")
@@ -54,20 +99,31 @@ if __name__ == '__main__':
   parser.add_argument('--server', type=str, default='localhost',
                       help='SMTP server')
 
+  parser.add_argument('--error', '-e', type=str, nargs='*',
+                      help='Email address to send errors to (if any)')
+
   parser.add_argument('--noop', '-n', action='store_true', default=False,
                       help='Noop: if set, prints email to stdout instead of sending')
 
-  parser.add_argument('json', type=str,
+  parser.add_argument('--json', '-j', type=str,
                       help="Json formated data file (use '-' for stdin)")
 
   args = parser.parse_args()
-
-  template_path = check_and_get_template_path(parser, args.plain)
-  template = get_template(template_path)
-
-  data = check_and_get_data(parser, args.json)
-
   email_server = EmailServer(args.server)
+
+  try:
+    template_path = 'UNKNOWN_TEMPLATE'
+    data = 'UNKNOWN_DATA'
+    template_path = check_and_get_template_path(parser, args.plain)
+    template = get_template(template_path)
+    data = check_and_get_data(parser, args.json)
+  except Exception as e:
+    if args.error:
+      send_error_report(email_server, args.sender, args.to, args.error,
+                        '[ERROR REPORT] ' + args.subject, e,
+                        template_path, args, data)
+    parser.error(e.message)
+
   email = Email(sender=args.sender, recipients=args.to, subject=args.subject, template=template, data=data)
 
   if args.noop:
@@ -78,15 +134,22 @@ if __name__ == '__main__':
 
   if isinstance(response, OK):
     print >> sys.stderr, "OK: %s" % response.message
-  elif isinstance(response, Failure):
-    # Maybe add an optional parameter to send someone else the error report?
-    print >> sys.stderr, "No email sent because:"
-    print >> sys.stderr, "Failure: %s" % response.message
-    exit(1)
   elif isinstance(response, NoContent):
     print >> sys.stderr, "No email sent because:"
     print >> sys.stderr, "NoContent: %s" % response.message
+  elif isinstance(response, Failure):
+    print >> sys.stderr, "No email sent because:"
+    print >> sys.stderr, "Failure: %s" % response.message
+    if args.error:
+      send_error_report(email_server, args.sender, args.to, args.error,
+                        '[ERROR REPORT] ' + args.subject, response,
+                        template_path, args, data)
+    exit(1)
   else:
     print >> sys.stderr, "No email sent because:"
     print >> sys.stderr, "UNKNOWN: %s" % response.message
+    if args.error:
+      send_error_report(email_server, args.sender, args.to, args.error,
+                        '[ERROR REPORT] ' + args.subject, response,
+                        template_path, args, data)
     exit(1)
