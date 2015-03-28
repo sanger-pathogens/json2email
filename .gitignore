@@ -3,3 +3,5 @@
 *.pyc
 *.egg
 *.egg-info
+.eggs
+build

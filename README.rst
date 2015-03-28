@@ -1,13 +1,13 @@
-jsontoemail
+json2email
 ===========
 
 Takes some json and a template and sends an email. Json can be provided
 as a filename or via stdin. Templates are rendered using
 `Jinja2 <http://jinja.pocoo.org/docs/dev/>`_. If the template renders
-only whitespace, jsontoemail does not send an email. This can be used to
+only whitespace, json2email does not send an email. This can be used to
 implement logic within the template itself.
 
-jsontoemail accepts an argument for an email address which it will try
+json2email accepts an argument for an email address which it will try
 and inform if there are errors. Obviously this isn't possible for some
 classes of error.
 
@@ -161,4 +161,4 @@ Test are run using:
 
     ./run_tests.sh
 
-jsontoemail has been tested on Ubuntu 12.04 with python 2.7.3
+json2email has been tested on Ubuntu 12.04 with python 2.7.3

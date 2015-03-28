@@ -1,3 +1,3 @@
 #!/bin/bash
 
-python -m unittest discover -s jsontoemail/tests/ -p '*_test.py'
+python -m unittest discover -s json2email/tests/ -p '*_test.py'
