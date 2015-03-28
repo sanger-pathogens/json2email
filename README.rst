@@ -19,8 +19,8 @@ Usage
 
 ::
 
-    $ json-to-email -h
-    usage: json-to-email [-h] [--plain PLAIN] [--subject SUBJECT]
+    $ json2email -h
+    usage: json2email [-h] [--plain PLAIN] [--subject SUBJECT]
                          [--to TO [TO ...]] [--from SENDER] [--server SERVER]
                          [--error [ERROR [ERROR ...]]] [--noop] [--json JSON]
 
@@ -55,7 +55,7 @@ Example command (with noop):
 
 ::
 
-    $ json-to-email --plain examples/pipeline_jobs.txt.jinja \
+    $ json2email --plain examples/pipeline_jobs.txt.jinja \
                     --subject '[Pipeline-bot] Jobs needing approval' \
                     --to an_email_address@sanger.ac.uk \
                     --from no-reply@sanger.ac.uk \
