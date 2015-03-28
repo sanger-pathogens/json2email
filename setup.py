@@ -6,14 +6,14 @@ def readme():
   with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as f:
     return f.read()
 
-setup(name='jsontoemail',
-      version='0.0.4',
+setup(name='json2email',
+      version='0.0.5',
       description='Takes a jinja2 template and some json and sends an email',
       long_description=readme(),
-      url='https://github.com/sanger-pathogens/jsontoemail',
+      url='https://github.com/sanger-pathogens/json2email',
       author='Ben Taylor',
       author_email='ben.taylor@sanger.ac.uk',
-      scripts=['scripts/json-to-email'],
+      scripts=['scripts/json2email'],
       include_package_data=True,
       install_requires=[
         'jinja2'

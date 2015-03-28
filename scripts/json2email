@@ -9,8 +9,8 @@ import datetime
 
 from argparse import ArgumentParser, ArgumentError, FileType
 from jinja2 import Template
-from jsontoemail import Email, EmailServer
-from jsontoemail import OK, NoContent, Failure
+from json2email import Email, EmailServer
+from json2email import OK, NoContent, Failure
 
 def check_and_get_template_path(parser, file_handle):
   if file_handle == None:

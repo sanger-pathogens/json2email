@@ -1,6 +1,6 @@
 import unittest
-from jsontoemail import Email, EmailServer
-from jsontoemail import Failure, NoContent, OK
+from json2email import Email, EmailServer
+from json2email import Failure, NoContent, OK
 from mock import MagicMock, patch
 from smtplib import SMTPResponseException
 
