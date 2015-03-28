@@ -7,7 +7,7 @@ def readme():
     return f.read()
 
 setup(name='json2email',
-      version='0.0.5',
+      version='0.0.6',
       description='Takes a jinja2 template and some json and sends an email',
       long_description=readme(),
       url='https://github.com/sanger-pathogens/json2email',
