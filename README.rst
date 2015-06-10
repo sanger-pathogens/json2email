@@ -1,6 +1,9 @@
 json2email
 ===========
 
+.. image:: https://travis-ci.org/sanger-pathogens/json2email.svg?branch=master
+    :target: https://travis-ci.org/sanger-pathogens/json2email
+
 Takes some json and a template and sends an email. Json can be provided
 as a filename or via stdin. Templates are rendered using
 `Jinja2 <http://jinja.pocoo.org/docs/dev/>`_. If the template renders
