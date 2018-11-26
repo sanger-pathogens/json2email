@@ -1,27 +1,51 @@
-json2email
-===========
+# json2email
+Takes some json and a template and sends an email
 
-.. image:: https://travis-ci.org/sanger-pathogens/json2email.svg?branch=master
-    :target: https://travis-ci.org/sanger-pathogens/json2email
+[![Build Status](https://travis-ci.org/sanger-pathogens/json2email.svg?branch=master)](https://travis-ci.org/sanger-pathogens/json2email)   
+[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-brightgreen.svg)](https://github.com/sanger-pathogens/json2email/blob/master/LICENSE)
 
-Takes some json and a template and sends an email. Json can be provided
-as a filename or via stdin. Templates are rendered using
-`Jinja2 <http://jinja.pocoo.org/docs/dev/>`_. If the template renders
-only whitespace, json2email does not send an email. This can be used to
-implement logic within the template itself.
+## Contents
+  * [Introduction](#introduction)
+  * [Installation](#installation)
+    * [Required dependencies](#required-dependencies)
+    * [Using pip](#using-pip)
+    * [Running the tests](#running-the-tests)
+  * [Usage](#usage)
+    * [Example](#example)
+  * [License](#license)
+  * [Feedback/Issues](#feedbackissues)
 
-json2email accepts an argument for an email address which it will try
-and inform if there are errors. Obviously this isn't possible for some
-classes of error.
+## Introduction
 
-This is still pretty untested so please raise an issue if you spot any
-bugs.
+Takes some json and a template and sends an email. Json can be provided as a filename or via stdin. Templates are rendered using [Jinja2](http://jinja.pocoo.org/docs/dev/). If the template renders only whitespace, json2email does not send an email. This can be used to
+implement logic within the template itself.   
 
-Usage
------
+json2email accepts an argument for an email address which it will try and inform if there are errors. This isn't possible for some classes of error.   
 
-::
+## Installation
+json2email has the following dependencies:
 
+### Required dependencies
+* jinja2
+* smtplib
+* email
+* re
+* unittest
+* mock
+
+Details for installing json2email are provided below. If you encounter an issue when installing json2email please contact your local system administrator. If you encounter a bug please log it [here](https://github.com/sanger-pathogens/json2email/issues) or email us at path-help@sanger.ac.uk.
+
+### Using pip
+
+`pip install git+git://github.com/sanger-pathogens/json2email.git`
+
+### Running the tests
+Test are run using:
+
+`./run_tests.sh`
+
+## Usage
+```
     $ json2email -h
     usage: json2email [-h] [--plain PLAIN] [--subject SUBJECT]
                          [--to TO [TO ...]] [--from SENDER] [--server SERVER]
@@ -45,19 +69,12 @@ Usage
       --noop, -n            Noop: if set, prints email to stdout instead of
                             sending
       --json JSON, -j JSON  Json formated data file (use '-' for stdin)
-
-Example
--------
-
-Our team manages a pipeline to which users can add jobs. Some of these
-jobs need to be approved by an admin before they run. We output a json
-summary of the jobs which is shown below. We then use a template (also
-below) to render an email every day to remind us to approve the jobs.
+```
+### Example
+Our team manages a pipeline to which users can add jobs. Some of these jobs need to be approved by an admin before they run. We output a json summary of the jobs which is shown below. We then use a template (also below) to render an email every day to remind us to approve the jobs.   
 
 Example command (with noop):
-
-::
-
+```
     $ json2email --plain examples/pipeline_jobs.txt.jinja \
                     --subject '[Pipeline-bot] Jobs needing approval' \
                     --to an_email_address@sanger.ac.uk \
@@ -66,11 +83,9 @@ Example command (with noop):
                     --error an_admin_address@sanger.ac.uk \
                     --json examples/pipeline_jobs_data.json \
                     --noop
-
+```
 Example output:
-
-::
-
+```
     Content-Type: text/plain; charset="us-ascii"
     MIME-Version: 1.0
     Content-Transfer-Encoding: 7bit
@@ -82,11 +97,9 @@ Example output:
     /parent\_dir/annotation\_job\_tracker.conf has 1 jobs needing admin attention
     /parent\_dir/assembly\_job\_tracker.conf has 2 jobs needing admin attention
     Report last updated at 2015-03-24T15:26:17.246253
-
+```
 Example json:
-
-::
-
+```
     {
       "created_at": "2015-03-24T15:26:17.246253",
       "jobs": [
@@ -128,11 +141,9 @@ Example json:
         }
       ]
     }
-
+```
 Example template:
-
-::
-
+```
     {% set jobs_requiring_approval = jobs | selectattr('approval_required') | list -%}
     {%- if jobs_requiring_approval -%}
     {{ jobs_requiring_approval | count }} jobs require approval
@@ -141,27 +152,10 @@ Example template:
     {%- endfor %}
     Report last updated at {{ created_at }}
     {%- endif -%}
+```
 
-Requirements
-------------
+## License
+json2email is free software, licensed under [GPLv3](https://github.com/sanger-pathogens/json2email/blob/master/LICENSE).
 
--  jinja2
--  smtplib
--  email
--  re
-
-For tests:
-
-- unittest
-- mock
-
-Testing
--------
-
-Test are run using:
-
-::
-
-    ./run_tests.sh
-
-json2email has been tested on Ubuntu 12.04 with python 2.7.3
+## Feedback/Issues
+Please report any issues to the [issues page](https://github.com/sanger-pathogens/json2email/issues) or email path-help@sanger.ac.uk.

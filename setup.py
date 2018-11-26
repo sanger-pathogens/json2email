@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 import multiprocessing
 
 def readme():
-  with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as f:
+  with open(os.path.join(os.path.dirname(__file__), 'README.md')) as f:
     return f.read()
 
 setup(name='json2email',
