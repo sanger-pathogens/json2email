@@ -1,5 +1,7 @@
 language: python
 python:
-  - "3.4"
+  - "2.7"
 sudo: false
-script: "python3 setup.py test"
+install:
+  - pip install .
+script: "python setup.py test"
