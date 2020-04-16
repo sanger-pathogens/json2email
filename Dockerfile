@@ -12,6 +12,7 @@ RUN mkdir -p ${BUILD_DIR}
 COPY . ${BUILD_DIR}
 WORKDIR ${BUILD_DIR}
 
-RUN pip install .
+RUN pip install . && \
+	./run_tests.sh
 
 CMD json2email
